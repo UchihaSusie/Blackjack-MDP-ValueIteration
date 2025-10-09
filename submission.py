@@ -11,13 +11,15 @@ class CounterexampleMDP(util.MDP):
     # Return a value of any type capturing the start state of the MDP.
     def startState(self):
         # BEGIN_YOUR_CODE 
-        raise Exception("Not implemented yet")
+        return 0  # Start at state 0
         # END_YOUR_CODE
 
     # Return a list of strings representing actions possible from |state|.
     def actions(self, state):
         # BEGIN_YOUR_CODE 
-        raise Exception("Not implemented yet")
+        if state in [-2, 2]:  # Terminal states have no actions
+            return []
+        return ['action1', 'action2']  # Non-terminal states can take either action
         # END_YOUR_CODE
 
     # Given a |state| and |action|, return a list of (newState, prob, reward) tuples
@@ -25,13 +27,38 @@ class CounterexampleMDP(util.MDP):
     # Remember that if |state| is an end state, you should return an empty list [].
     def succAndProbReward(self, state, action):
         # BEGIN_YOUR_CODE 
-        raise Exception("Not implemented yet")
+        if state in [-2, 2]:  # Terminal states have no successors
+            return []
+        
+        if action == 'action1':
+            # 80% chance to go to s-1, 20% chance to go to s+1
+            newState1 = state - 1
+            newState2 = state + 1
+            
+            # Calculate rewards
+            reward1 = 20 if newState1 == -2 else (100 if newState1 == 2 else -5)
+            reward2 = 20 if newState2 == -2 else (100 if newState2 == 2 else -5)
+            
+            return [(newState1, 0.8, reward1), (newState2, 0.2, reward2)]
+        
+        elif action == 'action2':
+            # 70% chance to go to s-1, 30% chance to go to s+1
+            newState1 = state - 1
+            newState2 = state + 1
+            
+            # Calculate rewards
+            reward1 = 20 if newState1 == -2 else (100 if newState1 == 2 else -5)
+            reward2 = 20 if newState2 == -2 else (100 if newState2 == 2 else -5)
+            
+            return [(newState1, 0.7, reward1), (newState2, 0.3, reward2)]
+        
+        return []  # Unknown action
         # END_YOUR_CODE
 
     # Set the discount factor (float or integer) for your counterexample MDP.
     def discount(self):
         # BEGIN_YOUR_CODE 
-        raise Exception("Not implemented yet")
+        return 1  # Discount factor γ = 1
         # END_YOUR_CODE
 
 ############################################################
