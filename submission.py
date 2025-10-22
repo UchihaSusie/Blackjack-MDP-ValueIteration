@@ -18,8 +18,8 @@ class CounterexampleMDP(util.MDP):
     def actions(self, state):
         # BEGIN_YOUR_CODE 
         if state in [-2, 2]:  # Terminal states have no actions
-            return []
-        return ['action1', 'action2']  # Non-terminal states can take either action
+            return  ['End']
+        return ['Take', 'Peek', 'End']  # Non-terminal states can take any of these actions
         # END_YOUR_CODE
 
     # Given a |state| and |action|, return a list of (newState, prob, reward) tuples
@@ -28,9 +28,12 @@ class CounterexampleMDP(util.MDP):
     def succAndProbReward(self, state, action):
         # BEGIN_YOUR_CODE 
         if state in [-2, 2]:  # Terminal states have no successors
-            return []
+            if action == 'End':
+                return [(state, 1.0, 0.0)]
+            else:
+                return [] 
         
-        if action == 'action1':
+        if action == 'Take':
             # 80% chance to go to s-1, 20% chance to go to s+1
             newState1 = state - 1
             newState2 = state + 1
@@ -41,7 +44,7 @@ class CounterexampleMDP(util.MDP):
             
             return [(newState1, 0.8, reward1), (newState2, 0.2, reward2)]
         
-        elif action == 'action2':
+        elif action == 'Peek':
             # 70% chance to go to s-1, 30% chance to go to s+1
             newState1 = state - 1
             newState2 = state + 1
@@ -51,6 +54,9 @@ class CounterexampleMDP(util.MDP):
             reward2 = 20 if newState2 == -2 else (100 if newState2 == 2 else -5)
             
             return [(newState1, 0.7, reward1), (newState2, 0.3, reward2)]
+        
+        elif action == 'End':
+            return [(state, 1.0, 0.0)]
         
         return []  # Unknown action
         # END_YOUR_CODE
@@ -198,10 +204,9 @@ def peekingMDP():
     optimal action at least 10% of the time.
     """
     # BEGIN_YOUR_CODE 
-    # Design: A deck with many safe small cards and some large bust cards,
-    # so paying peekCost=1 to decide whether to take or quit is valuable
-    # when current total is near threshold=20.
-    # Example: values [1, 11] with moderate multiplicity tends to make peeking
-    # optimal in many near-threshold states.
-    return BlackjackMDP(cardValues=[1, 11], multiplicity=4, threshold=20, peekCost=1)
+    # Design: Create a scenario where peeking is frequently optimal
+    # Use a deck with mostly small cards (1) and some large cards (10)
+    # This creates many states where peeking helps avoid busting
+    # Lower peekCost makes peeking more attractive
+    return BlackjackMDP(cardValues=[3, 21], multiplicity=10, threshold=20, peekCost=1)
     # END_YOUR_CODE
